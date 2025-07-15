@@ -6,35 +6,41 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
-from streamlit_authenticator import Hasher, Authenticate
+from streamlit_authenticator import Authenticate
 from wordcloud import WordCloud
 
 # ── 1. Authentication ──────────────────────────────────────────────────────────
-plain_password = "*6996@QweQu#"
-hashed_password = Hasher([plain_password]).generate()[0]
-
+# Using the new API format - let the library auto-hash the password
 credentials = {
     "usernames": {
         "admin": {
             "name": "Admin",
-            "password": hashed_password
+            "password": "*6996@QweQu#"  # This will be hashed automatically
         }
     }
 }
 
 authenticator = Authenticate(
     credentials,
-    cookie_name="galamsey_cookie",
+    cookie_name="galamsey_cookie", 
     key="galamsey_key",
     cookie_expiry_days=1
 )
 
-name, auth_status, _ = authenticator.login("Login", "main")
-if not auth_status:
+# Use the new login method
+try:
+    authenticator.login("Login", "main")
+except Exception as e:
+    st.error(e)
+
+# Check authentication status using session state
+if not st.session_state.get("authentication_status"):
     st.error("❌ Username/password incorrect")
     st.stop()
+
+# Logout and welcome message
 authenticator.logout("Logout", "sidebar")
-st.sidebar.write(f"Hello, **{name}**!")
+st.sidebar.write(f"Hello, **{st.session_state.get('name')}**!")
 
 # ── 2. Load Data & Last‑Updated Badge ──────────────────────────────────────────
 DATA_PATH = "data/processed/twitter_with_emotions.csv"
