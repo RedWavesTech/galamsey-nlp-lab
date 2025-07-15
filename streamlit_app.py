@@ -6,24 +6,23 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import streamlit as st
-import streamlit_authenticator as stauth
+from streamlit_authenticator import Hasher, Authenticate
 from wordcloud import WordCloud
 
 # ── 1. Authentication ──────────────────────────────────────────────────────────
-# Pre-generate hashed password (avoid inline Hasher calls)
 plain_password = "*6996@QweQu#"
-hashed_passwords = stauth.Hasher([plain_password]).generate()
+hashed_password = Hasher([plain_password]).generate()[0]
 
 credentials = {
     "usernames": {
         "admin": {
             "name": "Admin",
-            "password": hashed_passwords[0]
+            "password": hashed_password
         }
     }
 }
 
-authenticator = stauth.Authenticate(
+authenticator = Authenticate(
     credentials,
     cookie_name="galamsey_cookie",
     key="galamsey_key",
@@ -47,7 +46,7 @@ st.sidebar.markdown(f"**Last updated:** {mod_time:%Y-%m-%d %H:%M:%S}")
 # ── 3. Sidebar: Interactive Filters ────────────────────────────────────────────
 st.sidebar.subheader("Filters")
 
-# Date range
+# Date range selector
 start, end = st.sidebar.date_input(
     "Date range",
     value=[df["date"].min(), df["date"].max()]
