@@ -1,4 +1,5 @@
-# Streamlit app entry pointimport os
+# Streamlit app entry point
+import os
 from datetime import datetime
 
 import pandas as pd
@@ -9,15 +10,19 @@ import streamlit_authenticator as stauth
 from wordcloud import WordCloud
 
 # ── 1. Authentication ──────────────────────────────────────────────────────────
+# Pre-generate hashed password (avoid inline Hasher calls)
+plain_password = "*6996@QweQu#"
+hashed_passwords = stauth.Hasher([plain_password]).generate()
+
 credentials = {
     "usernames": {
         "admin": {
             "name": "Admin",
-            # Replace 'YourPassword' with your chosen password
-            "password": stauth.Hasher(["*6996@QweQu#"]).generate()[0]
+            "password": hashed_passwords[0]
         }
     }
 }
+
 authenticator = stauth.Authenticate(
     credentials,
     cookie_name="galamsey_cookie",
@@ -97,37 +102,3 @@ st.dataframe(
     filtered[["date", "username", "roberta_label", "dominant_emotion", "content"]],
     height=300
 )
-import streamlit as st
--import streamlit_authenticator as stauth
-+import streamlit_authenticator as stauth
-
- # ── 1. Authentication ──────────────────────────────────────────────────────────
--credentials = {
--    "usernames": {
--        "admin": {
--            "name": "Admin",
--            # Replace 'YourPassword' with your chosen password
--            "password": stauth.Hasher(["*6996@QweQu#"]).generate()[0]
--        }
--    }
--}
-+# 1a. Pre-generate hashed passwords (so we don’t call generate() inline)
-+plain_password = "*6996@QweQu#"
-+hashed_passwords = stauth.Hasher([plain_password]).generate()
-+
-+credentials = {
-+    "usernames": {
-+        "admin": {
-+            "name": "Admin",
-+            # Use the first (and only) hash we generated
-+            "password": hashed_passwords[0]
-+        }
-+    }
-+}
-
- authenticator = stauth.Authenticate(
-     credentials,
-     cookie_name="galamsey_cookie",
-     key="galamsey_key",
-     cookie_expiry_days=1
- )
