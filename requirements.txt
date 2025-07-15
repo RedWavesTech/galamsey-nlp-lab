@@ -1,0 +1,9 @@
+pandas
+nltk
+transformers
+snscrape
+matplotlib
+seaborn
+wordcloud
+nrclex
+streamlit
