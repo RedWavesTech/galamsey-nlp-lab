@@ -6,4 +6,5 @@ matplotlib
 seaborn
 wordcloud
 nrclex
-streamlitstreamlit-authenticator
+streamlit
+streamlit-authenticator
